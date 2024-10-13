@@ -1,0 +1,106 @@
+networks:
+  meals-network:
+    name: meals-network
+
+services:
+  meals-pg:
+    container_name: meals-pg
+    image: postgres:16-alpine
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER:-root}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-meals-pg}
+      TZ: ${TZ:-Asia/Makassar}
+    volumes:
+      - meals-pg-volume:/var/lib/postgresql/data/
+    networks:
+      - meals-network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d ${DB_NAME:-meals-pg}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  meals-go:
+    container_name: meals-go
+    build:
+      context: ..
+      dockerfile: build/ci/Dockerfile.local
+    ports:
+      - "${HTTP_PORT:-8000}:${HTTP_PORT:-8000}"
+      - "2345:2345"
+    networks:
+      - meals-network
+    depends_on:
+      meals-pg:
+        condition: service_healthy
+      meals-redis:
+        condition: service_healthy
+      meals-rabbit:
+        condition: service_healthy
+    volumes:
+      - ..:/app:rw,delegated
+    restart: always
+
+  meals-redis:
+    container_name: meals-redis
+    image: redis:alpine
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    environment:
+      TZ: ${TZ:-Asia/Makassar}
+    volumes:
+      - meals-redis-volume:/data
+    networks:
+      - meals-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  meals-rabbit:
+    container_name: "meals-rabbit"
+    image: "rabbitmq:3.13-management"
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"  # RabbitMQ default port
+      - "15672:15672"  # RabbitMQ Management UI port
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "secretcookie"  # Change this to a secure value
+      TZ: ${TZ:-Asia/Makassar}
+    volumes:
+      - meals-rabbit-volume:/var/lib/rabbitmq
+    networks:
+      - meals-network
+    healthcheck:
+      test: "rabbitmq-diagnostics -q ping"
+      interval: 10s  # Adjust as needed
+      timeout: 10s   # Adjust as needed
+      retries: 3     # Adjust as needed
+
+  meals-minio:
+    container_name: "meals-minio"
+    image: "quay.io/minio/minio:RELEASE.2023-11-01T01-57-10Z-cpuv1"
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    networks:
+      - meals-network
+    environment:
+      - MINIO_ROOT_USER=${MINIO_PUBLIC_ACCESS_KEY:-e703d10a1e860cc2473f08e7}
+      - MINIO_ROOT_PASSWORD=${MINIO_PRIVATE_ACCESS_KEY:-f892a331196c00dcae2ad3b80dd12d33862884}
+      - MINIO_DEFAULT_BUCKETS=${MINIO_BUCKET:-meals-bucket}
+    volumes:
+      - 'meals-minio-volume:/data'
+    command: server /data --console-address ":9001"
+    
+volumes:
+  meals-pg-volume:
+  meals-redis-volume:
+  meals-rabbit-volume:
+  meals-minio-volume:
+    driver: local
