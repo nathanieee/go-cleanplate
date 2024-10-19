@@ -32,12 +32,14 @@ func (m Minio) Init() (*minio.Client, error) {
 }
 
 func (m Minio) SetupMinio(client *minio.Client, ctx context.Context) error {
+	// * create the minio bucket
 	err := m.CreateBucket(client, ctx)
 	if err != nil {
 		utlogger.Fatal(err)
 		return err
 	}
 
+	// * make the bucket public
 	err = m.MakeBucketPublic(client, ctx)
 	if err != nil {
 		utlogger.Fatal(err)
@@ -52,6 +54,7 @@ func (m Minio) MakeBucketPublic(client *minio.Client, ctx context.Context) error
 		bucketName = m.Bucket
 	)
 
+	// * set the bucket policy to be public
 	policy := `{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":["*"]},"Action":["s3:GetObject"],"Resource":["arn:aws:s3:::` + bucketName + `/*"]}]}`
 
 	return client.SetBucketPolicy(ctx, bucketName, policy)

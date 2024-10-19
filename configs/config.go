@@ -10,6 +10,7 @@ import (
 )
 
 type (
+	// * main struct to map the env value to an object
 	Config struct {
 		// * internal config
 		API
@@ -21,7 +22,6 @@ type (
 		Mail
 		JWT
 		Credential
-		Order
 
 		// * external config
 		Redis
@@ -32,6 +32,7 @@ type (
 		Telegram
 	}
 
+	// * struct related to the configuration of the API
 	API struct {
 		VerifyTokenLength int    `env:"API_VERIFY_TOKEN_LENGTH" env-default:"8"`
 		URL               string `env:"API_URL" env-default:"localhost"`
@@ -39,22 +40,9 @@ type (
 		Environment       string `env:"API_ENV" env-default:"production"`
 		APIResetPassword
 	}
+	// * struct related to the configuration of the reset password
 	APIResetPassword struct {
 		Cooldown int `env:"API_RESET_PASSWORD_COOLDOWN" env-default:"5"`
-	}
-
-	Order struct {
-		OrderBuffer
-		OrderMax
-	}
-	OrderBuffer struct {
-		AutomaticallyCancelled      int `env:"ORDER_AUTOMATICALLY_CANCELLED_BUFFER" env-default:"10"`
-		AutomaticallyBeingPickedUp  int `env:"ORDER_AUTOMATICALLY_BEING_PICKED_UP" env-default:"10"`
-		AutomaticallyOutForDelivery int `env:"ORDER_AUTOMATICALLY_OUT_FOR_DELIVERY" env-default:"10"`
-		AutomaticallyDelivered      int `env:"ORDER_AUTOMATICALLY_DELIVERED" env-default:"10"`
-	}
-	OrderMax struct {
-		Member int `env:"ORDER_MAX_MEMBER" env-default:"3"`
 	}
 
 	App struct {

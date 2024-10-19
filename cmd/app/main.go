@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	// * get and map the env value to an object
 	cfg := configs.GetInstance()
 	apps.Run(cfg)
 }

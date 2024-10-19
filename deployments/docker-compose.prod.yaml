@@ -19,6 +19,7 @@ services:
     restart: always
 
   meals-go:
+    # change the image name to the correlated image
     image: jonathanvince/meals-backend:latest
     container_name: meals-go
     ports:
