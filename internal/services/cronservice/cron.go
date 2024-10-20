@@ -3,8 +3,6 @@ package cronservice
 import (
 	"fmt"
 	"project-skbackend/configs"
-	"project-skbackend/internal/repositories/orderrepo"
-	"project-skbackend/packages/consttypes"
 	"project-skbackend/packages/utils/utlogger"
 	"time"
 
@@ -13,8 +11,7 @@ import (
 
 type (
 	CronService struct {
-		cfg  *configs.Config
-		rodr orderrepo.IOrderRepository
+		cfg *configs.Config
 	}
 
 	ICronService interface {
@@ -24,11 +21,9 @@ type (
 
 func NewCronService(
 	cfg *configs.Config,
-	rodr orderrepo.IOrderRepository,
 ) *CronService {
 	return &CronService{
-		cfg:  cfg,
-		rodr: rodr,
+		cfg: cfg,
 	}
 }
 
@@ -49,7 +44,7 @@ func (s *CronService) Init() (gocron.Scheduler, error) {
 	}
 
 	// * add a order job
-	s.orderSchedule(gsch)
+	s.parentExampleSchedule(gsch)
 
 	// * start the scheduler
 	gsch.Start()
@@ -57,12 +52,13 @@ func (s *CronService) Init() (gocron.Scheduler, error) {
 	return gsch, nil
 }
 
-func (s *CronService) orderSchedule(gsch gocron.Scheduler) {
+// TODO: change this into the parent of the service that you want to schedule
+func (s *CronService) parentExampleSchedule(gsch gocron.Scheduler) {
 	var (
 		errs []error
 	)
 
-	err := s.scheduleOrderCancelled(gsch)
+	err := s.childExampleSchedule(gsch)
 	if err != nil {
 		errs = append(errs, err)
 	}
@@ -72,7 +68,7 @@ func (s *CronService) orderSchedule(gsch gocron.Scheduler) {
 	}
 }
 
-func (s *CronService) scheduleOrderCancelled(gsch gocron.Scheduler) error {
+func (s *CronService) childExampleSchedule(gsch gocron.Scheduler) error {
 	_, err := gsch.NewJob(
 		gocron.DurationJob(
 			// TODO: use the env variable
@@ -80,12 +76,8 @@ func (s *CronService) scheduleOrderCancelled(gsch gocron.Scheduler) error {
 		),
 		gocron.NewTask(
 			func() error {
-				err := s.rodr.UpdateAutomaticallyStatus(consttypes.OS_CANCELLED, s.cfg.OrderBuffer.AutomaticallyCancelled, []consttypes.OrderStatus{consttypes.OS_PLACED})
-				if err != nil {
-					utlogger.Error(err)
-					return err
-				}
-
+				// * do something here regarding the about your schedule
+				// * return an error if the function
 				return nil
 			},
 		),
@@ -96,7 +88,7 @@ func (s *CronService) scheduleOrderCancelled(gsch gocron.Scheduler) error {
 		return err
 	}
 
-	utlogger.Info(fmt.Sprintf("Service for Cron %s Running!", "Update Order Expired"))
+	utlogger.Info(fmt.Sprintf("Service for Cron %s Running!", "Example Schedule"))
 
 	return nil
 }

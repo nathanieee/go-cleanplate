@@ -10,20 +10,9 @@ import (
 
 func RoleTranslate(role responses.BaseRole) (uuid.UUID, consttypes.UserRole, bool) {
 	switch role.Role {
-	case consttypes.UR_CAREGIVER:
-		res, ok := role.Data.(*models.Caregiver)
-		if !ok {
-			return uuid.UUID{}, consttypes.UserRole(0), false
-		}
-		return res.ID, res.User.Role, true
-	case consttypes.UR_MEMBER:
-		res, ok := role.Data.(*models.Member)
-		if !ok {
-			return uuid.UUID{}, consttypes.UserRole(0), false
-		}
-		return res.ID, res.User.Role, true
-	case consttypes.UR_PARTNER:
-		res, ok := role.Data.(*models.Partner)
+	// * add another role here before processing it
+	case consttypes.UR_ADMIN:
+		res, ok := role.Data.(*models.Admin)
 		if !ok {
 			return uuid.UUID{}, consttypes.UserRole(0), false
 		}

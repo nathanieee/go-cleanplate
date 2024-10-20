@@ -7,11 +7,6 @@ import (
 	"project-skbackend/internal/models"
 	"project-skbackend/internal/models/base"
 	"project-skbackend/internal/repositories/adminrepo"
-	"project-skbackend/internal/repositories/caregiverrepo"
-	"project-skbackend/internal/repositories/memberrepo"
-	"project-skbackend/internal/repositories/organizationrepo"
-	"project-skbackend/internal/repositories/partnerrepo"
-	"project-skbackend/internal/repositories/patronrepo"
 	"project-skbackend/internal/repositories/userrepo"
 	"project-skbackend/packages/consttypes"
 	"project-skbackend/packages/utils/utpagination"
@@ -24,11 +19,6 @@ type (
 	UserService struct {
 		ruser userrepo.IUserRepository
 		radmn adminrepo.IAdminRepository
-		rcare caregiverrepo.ICaregiverRepository
-		rmemb memberrepo.IMemberRepository
-		rorga organizationrepo.IOrganizationRepository
-		rpart partnerrepo.IPartnerRepository
-		rpatr patronrepo.IPatronRepository
 	}
 
 	IUserService interface {
@@ -47,20 +37,10 @@ type (
 func NewUserService(
 	ruser userrepo.IUserRepository,
 	radmn adminrepo.IAdminRepository,
-	rcare caregiverrepo.ICaregiverRepository,
-	rmemb memberrepo.IMemberRepository,
-	rorga organizationrepo.IOrganizationRepository,
-	rpart partnerrepo.IPartnerRepository,
-	rpatr patronrepo.IPatronRepository,
 ) *UserService {
 	return &UserService{
 		ruser: ruser,
 		radmn: radmn,
-		rcare: rcare,
-		rmemb: rmemb,
-		rorga: rorga,
-		rpart: rpart,
-		rpatr: rpatr,
 	}
 }
 
@@ -171,43 +151,6 @@ func (s *UserService) GetUserName(uid uuid.UUID) (string, string, error) {
 
 		firstname = a.FirstName
 		lastname = a.LastName
-	case consttypes.UR_CAREGIVER:
-		c, err := s.rcare.GetByUserID(uid)
-		if err != nil {
-			return "", "", err
-		}
-
-		firstname = c.FirstName
-		lastname = c.LastName
-	case consttypes.UR_MEMBER:
-		m, err := s.rmemb.GetByUserID(uid)
-		if err != nil {
-			return "", "", err
-		}
-
-		firstname = m.FirstName
-		lastname = m.LastName
-	case consttypes.UR_ORGANIZATION:
-		o, err := s.rorga.GetByUserID(uid)
-		if err != nil {
-			return "", "", err
-		}
-
-		firstname = o.Name
-	case consttypes.UR_PARTNER:
-		p, err := s.rpart.GetByUserID(uid)
-		if err != nil {
-			return "", "", err
-		}
-
-		firstname = p.Name
-	case consttypes.UR_PATRON:
-		p, err := s.rpatr.GetByUserID(uid)
-		if err != nil {
-			return "", "", err
-		}
-
-		firstname = p.Name
 	default:
 		return "", "", consttypes.ErrUserInvalidRole
 	}
@@ -233,41 +176,6 @@ func (s *UserService) GetRoleDataByUserID(uid uuid.UUID) (*responses.BaseRole, e
 		}
 
 		data = a
-	case consttypes.UR_CAREGIVER:
-		c, err := s.rcare.GetByUserID(user.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		data = c
-	case consttypes.UR_MEMBER:
-		m, err := s.rmemb.GetByUserID(user.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		data = m
-	case consttypes.UR_ORGANIZATION:
-		o, err := s.rorga.GetByUserID(user.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		data = o
-	case consttypes.UR_PARTNER:
-		p, err := s.rpart.GetByUserID(user.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		data = p
-	case consttypes.UR_PATRON:
-		p, err := s.rpatr.GetByUserID(user.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		data = p
 	default:
 		return nil, consttypes.ErrUserInvalidRole
 	}

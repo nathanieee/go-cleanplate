@@ -44,11 +44,6 @@ func newAuthRoutes(
 
 		gverif := h.Group("verify").Use(middlewares.JWTAuthMiddleware(cfg,
 			consttypes.UR_ADMIN,
-			consttypes.UR_CAREGIVER,
-			consttypes.UR_MEMBER,
-			consttypes.UR_ORGANIZATION,
-			consttypes.UR_PARTNER,
-			consttypes.UR_PATRON,
 			consttypes.UR_USER,
 		))
 		{

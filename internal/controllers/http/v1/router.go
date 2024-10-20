@@ -23,18 +23,8 @@ func NewRouter(ge *gin.Engine, db *gorm.DB, cfg *configs.Config, di *di.Dependen
 	h := ge.Group("api/v1")
 	{
 		newAuthRoutes(h, cfg, rdb, di.AuthService, di.UserService)
-		newMemberRoutes(h, cfg, di.MemberService, di.CartService, di.UserService, di.AuthService, di.OrderService, di.FileService, di.BaseRoleService, di.CaregiverService)
-		newPartnerRoutes(h, cfg, di.AuthService, di.PartnerService, di.FileService)
-		newManageRoutes(h, cfg, di.MealService, di.MemberService, di.PartnerService, di.PatronService, di.IllnessService, di.FileService, di.AllergyService, di.DonationService)
-		newPatronRoutes(h, cfg, di.AuthService, di.PatronService, di.FileService)
-		newOrganizationRoutes(h, cfg, di.AuthService, di.OrganizationService)
+		newManageRoutes(h, cfg)
 		newFileRoutes(h, cfg, di.FileService)
-		newAllergyRoutes(h, cfg, di.AllergyService)
-		newIllnessRoutes(h, cfg, di.IllnessService)
-		newDonationRoutes(h, cfg, di.DonationService)
-		newCartRoutes(h, cfg, di.CartService, di.UserService)
-		newMealRoutes(h, cfg, di.MealService, di.MealCategoryService)
-		newProfileRoutes(h, cfg, di.UserService, di.MemberService, di.FileService, di.BaseRoleService)
-		newOrderRoutes(h, cfg, di.OrderService, di.UserService)
+		newProfileRoutes(h, cfg, di.UserService, di.FileService, di.BaseRoleService)
 	}
 }

@@ -98,6 +98,9 @@ var (
 	ErrFailedToDeleteMember   = fmt.Errorf("failed to delete member")
 	ErrFailedToFindAllMembers = fmt.Errorf("failed to find all members")
 
+	// * admins
+	ErrAdminNotFound = fmt.Errorf("admin not found")
+
 	// * orders
 	ErrFailedToGetDailyOrder    = fmt.Errorf("failed to get daily order")
 	ErrInvalidOrderStatus       = fmt.Errorf("invalid order status")

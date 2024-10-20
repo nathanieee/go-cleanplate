@@ -68,15 +68,9 @@ func (db DB) SetupExtension(gdb *gorm.DB) error {
 func (db DB) AutoSeedEnum(gdb *gorm.DB) error {
 	seedfuncs := []func(*gorm.DB) error{
 		// ! ---------------------------------- enum ---------------------------------- ! //
-		SeedAllergensEnum,
 		SeedGenderEnum,
-		SeedMealStatusEnum,
-		SeedDonationStatusEnum,
 		SeedImageTypeEnum,
-		SeedPatronTypeEnum,
-		SeedOrganizationTypeEnum,
 		SeedUserRoleEnum,
-		SeedOrderStatusEnum,
 	}
 
 	var (
@@ -100,23 +94,16 @@ func (db DB) AutoSeedEnum(gdb *gorm.DB) error {
 func (db DB) AutoSeedData(gdb *gorm.DB) error {
 	seedfuncs := []func(*gorm.DB) error{
 		// * dependent
-		SeedMealCategoryData,
 
 		// ! ------------------------------- credentials ------------------------------ ! //
 		SeedAdminCredentials,
-		SeedOrganizationCredentials,
-		SeedPartnerCredentials,
-		SeedMemberCredentials,
-		SeedPatronCredentials,
 
 		// ! ---------------------------------- data ---------------------------------- ! //
+		// ! put the seeder that is independent on this part of the seeder
 		// * independent
-		SeedAllergyData,
-		SeedIllnessData,
 
+		// ! put the seeder that is dependent on other data on this part of the seeder
 		// * dependent
-		SeedMealData,
-		SeedCartData,
 	}
 
 	var (
@@ -154,27 +141,6 @@ func (db DB) AutoMigrate(gdb *gorm.DB) error {
 		&models.AddressDetail{},
 
 		&models.Admin{},
-		&models.Allergy{},
-		&models.Caregiver{},
-		&models.Patron{},
-		&models.Donation{},
-		&models.DonationProof{},
-		&models.Illness{},
 		&models.Image{},
-		&models.Meal{},
-		&models.MealAllergy{},
-		&models.MealIllness{},
-		&models.MealImage{},
-		&models.MealCategory{},
-		&models.Member{},
-		&models.MemberAllergy{},
-		&models.MemberIllness{},
-		&models.Organization{},
-		&models.Partner{},
-		&models.Rating{},
-		&models.Cart{},
-		&models.Order{},
-		&models.OrderHistory{},
-		&models.OrderMeal{},
 	)
 }

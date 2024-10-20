@@ -7,8 +7,6 @@ import (
 	"mime/multipart"
 	"project-skbackend/configs"
 	"project-skbackend/internal/models"
-	"project-skbackend/internal/repositories/donationproofrepo"
-	"project-skbackend/internal/repositories/donationrepo"
 	"project-skbackend/internal/repositories/imagerepo"
 	"project-skbackend/internal/repositories/userimagerepo"
 	"project-skbackend/internal/repositories/userrepo"
@@ -31,8 +29,6 @@ type (
 		ruser userrepo.IUserRepository
 		rimg  imagerepo.IImageRepo
 		ruimg userimagerepo.IUserImageRepo
-		rdona donationrepo.IDonationRepository
-		rdnpr donationproofrepo.IDonationProofRepository
 
 		me    string
 		mussl bool
@@ -45,8 +41,6 @@ type (
 	IFileService interface {
 		Upload(req utfile.FileMultipart) (string, error)
 		UploadProfilePicture(uid uuid.UUID, fileheader *multipart.FileHeader) error
-		UploadDonationProof(did uuid.UUID, fileheader *multipart.FileHeader) error
-		UploadMealImages(mid uuid.UUID, fileheader []*multipart.FileHeader) error
 	}
 )
 
@@ -57,8 +51,6 @@ func NewFileService(
 	ruser userrepo.IUserRepository,
 	rimg imagerepo.IImageRepo,
 	ruimg userimagerepo.IUserImageRepo,
-	rdona donationrepo.IDonationRepository,
-	rdnpr donationproofrepo.IDonationProofRepository,
 ) *FileService {
 	return &FileService{
 		cfg: cfg,
@@ -69,8 +61,6 @@ func NewFileService(
 		ruser: ruser,
 		rimg:  rimg,
 		ruimg: ruimg,
-		rdona: rdona,
-		rdnpr: rdnpr,
 
 		me:    cfg.Minio.Endpoint,
 		mussl: cfg.Minio.UseSSL,
@@ -130,65 +120,6 @@ func (s *FileService) UploadProfilePicture(uid uuid.UUID, fileheader *multipart.
 	return nil
 }
 
-func (s *FileService) UploadDonationProof(did uuid.UUID, fileheader *multipart.FileHeader) error {
-	var (
-		err error
-	)
-
-	// * get donation by its id
-	donation, err := s.rdona.GetByID(did)
-	if err != nil {
-		utlogger.Error(err)
-		return consttypes.ErrUserNotFound
-	}
-
-	// * validate the file based on the custom options
-	filename, err := utfile.ValidateFile(fileheader, &utfile.ValidateFileOpts{
-		AllowedExtensions: []string{".jpg", ".jpeg", ".png"},
-		ValidateFileSizeOpts: utfile.ValidateFileSizeOpts{
-			MaxImageSize:       1,
-			MaxImageSizeSuffix: consttypes.FSS_MB,
-		},
-	})
-	if err != nil {
-		utlogger.Error(err)
-		return err
-	}
-
-	// * construct a new fileupload request
-	// * and then upload the file using the upload service
-	fileupload := utfile.NewFileUpload(fileheader)
-	url, err := s.Upload(*fileupload)
-	if err != nil {
-		utlogger.Error(err)
-		return consttypes.ErrFailedToUploadFile
-	}
-
-	// * construct a new donation proof image model
-	// * then create it in the database
-	image := models.NewDonationProof(
-		*filename,
-		url,
-	)
-	image, err = s.rimg.Create(*image)
-	if err != nil {
-		utlogger.Error(err)
-		return consttypes.ErrFailedToCreateImage
-	}
-
-	// * construct a new donation proof model
-	// * then create it in the database
-	donationproof := image.CreateDonationProof(
-		*donation,
-	)
-	if _, err := s.rdnpr.Create(*donationproof); err != nil {
-		utlogger.Error(err)
-		return consttypes.ErrGeneralFailed("creating donation proof", err.Error())
-	}
-
-	return nil
-}
-
 func (s *FileService) CheckAndSaveUserImage(u models.User, image models.Image) error {
 	ui, err := s.ruimg.GetByUserID(u.ID)
 	if ui == nil || (err != nil && errors.Is(err, gorm.ErrRecordNotFound)) {
@@ -212,11 +143,6 @@ func (s *FileService) CheckAndSaveUserImage(u models.User, image models.Image) e
 		}
 	}
 
-	return nil
-}
-
-func (s *FileService) UploadMealImages(mid uuid.UUID, fileheader []*multipart.FileHeader) error {
-	// TODO: implement uploading meal images
 	return nil
 }
 
