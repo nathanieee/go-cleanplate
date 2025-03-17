@@ -1,17 +1,17 @@
 
-# Go Cleanplate
+# Ecopick BE
 
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/nathanieee/go-cleanplate?include_prereleases)](https://github.com/nathanieee/go-cleanplate/releases)
-[![GitHub last commit](https://img.shields.io/github/last-commit/nathanieee/go-cleanplate)](https://github.com/nathanieee/go-cleanplate/commits)
-[![GitHub issues](https://img.shields.io/github/issues-raw/nathanieee/go-cleanplate)](https://github.com/nathanieee/go-cleanplate/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/nathanieee/go-cleanplate)](https://github.com/nathanieee/go-cleanplate/pulls)
-[![GitHub](https://img.shields.io/github/license/nathanieee/go-cleanplate)](https://github.com/nathanieee/go-cleanplate/blob/main/LICENSE)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/nathanieee/ecopick-be?include_prereleases)](https://github.com/nathanieee/ecopick-be/releases)
+[![GitHub last commit](https://img.shields.io/github/last-commit/nathanieee/ecopick-be)](https://github.com/nathanieee/ecopick-be/commits)
+[![GitHub issues](https://img.shields.io/github/issues-raw/nathanieee/ecopick-be)](https://github.com/nathanieee/ecopick-be/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/nathanieee/ecopick-be)](https://github.com/nathanieee/ecopick-be/pulls)
+[![GitHub](https://img.shields.io/github/license/nathanieee/ecopick-be)](https://github.com/nathanieee/ecopick-be/blob/main/LICENSE)
 
-Go Cleanplate is a boilerplate repository for Go projects, adhering to clean architecture principles. It offers a solid foundation for developers building scalable and maintainable applications in Go, including a modular structure and industry best practices.
+Ecopick BE is a boilerplate repository for Go projects, adhering to clean architecture principles. It offers a solid foundation for developers building scalable and maintainable applications in Go, including a modular structure and industry best practices.
 
 # Table of Contents
 
-- [Go Cleanplate](#go-cleanplate)
+- [Ecopick BE](#ecopick-be)
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -22,11 +22,11 @@ Go Cleanplate is a boilerplate repository for Go projects, adhering to clean arc
 # Installation
 [(Back to top)](#table-of-contents)
 
-To get started with Go Cleanplate, follow these steps:
+To get started with Ecopick BE, follow these steps:
 
 ```shell
-git clone https://github.com/nathanieee/go-cleanplate.git
-cd go-cleanplate
+git clone https://github.com/nathanieee/ecopick-be.git
+cd ecopick-be
 go mod tidy
 ```
 
@@ -46,7 +46,7 @@ For those interested in contributing or modifying the project, here's how to set
 
 1. Clone the project:
     ```shell
-    git clone https://github.com/nathanieee/go-cleanplate.git
+    git clone https://github.com/nathanieee/ecopick-be.git
     ```
 
 2. Install dependencies:
